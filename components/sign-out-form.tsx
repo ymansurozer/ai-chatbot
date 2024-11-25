@@ -1,17 +1,13 @@
 import Form from 'next/form';
+import { deauthenticate } from "@/app/(auth)/services/authenticate";
 
-import { signOut } from '@/app/(auth)/auth';
-
-export const SignOutForm = () => {
+export default async function SignOutForm() {
   return (
     <Form
       className="w-full"
       action={async () => {
-        'use server';
-
-        await signOut({
-          redirectTo: '/',
-        });
+        "use server";
+        await deauthenticate();
       }}
     >
       <button
@@ -22,4 +18,4 @@ export const SignOutForm = () => {
       </button>
     </Form>
   );
-};
+}

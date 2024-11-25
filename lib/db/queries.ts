@@ -25,6 +25,16 @@ import {
 const client = postgres(process.env.POSTGRES_URL!);
 const db = drizzle(client);
 
+export async function isUserExists(email: string): Promise<boolean> {
+  try {
+    const result = await db.select().from(user).where(eq(user.email, email));
+    return result.length > 0;
+  } catch (error) {
+    console.error('Failed to check if user exists in database:', error);
+    return false;
+  }
+}
+
 export async function getUser(email: string): Promise<Array<User>> {
   try {
     return await db.select().from(user).where(eq(user.email, email));
@@ -34,13 +44,14 @@ export async function getUser(email: string): Promise<Array<User>> {
   }
 }
 
-export async function createUser(email: string, password: string) {
+export async function createUser(email: string) {
   if (process.env.SIGNUP_DISABLED === 'true') {
     throw new Error('Signup is disabled');
   }
 
   const salt = genSaltSync(10);
-  const hash = hashSync(password, salt);
+  const tempPassword = genSaltSync(10);
+  const hash = hashSync(tempPassword, salt);
 
   try {
     return await db.insert(user).values({ email, password: hash });
