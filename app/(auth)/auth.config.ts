@@ -34,7 +34,7 @@ export const authConfig = {
           const userDetails = await getUserDetails(account.access_token);
           token.userDetails = userDetails;
 
-          const users = await getUser(userDetails.email);
+          const users = await getUser(userDetails.mail);
           if (users.length === 0) return null;
 
           token.id = users[0].id;
@@ -66,7 +66,8 @@ export const authConfig = {
           return true;
         }
       }
-      return false;
+
+      return true;
     },
   },
   secret: process.env.AUTH_SECRET,
